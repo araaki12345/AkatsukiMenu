@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import { MenuItem } from '@/types/menu';
 import { useMenu } from '@/hooks/useMenu';
@@ -7,37 +9,15 @@ export const DailyMenu = () => {
   const [menu, setMenu] = useState<MenuItem | null>(null);
 
   useEffect(() => {
-    const loadMenu = async () => {
-      const currentMenu = await fetchCurrentMenu();
-      setMenu(currentMenu);
-    };
-    loadMenu();
+    setMenu(fetchCurrentMenu());
   }, [fetchCurrentMenu]);
 
   if (isLoading) {
-    return (
-      <div className="animate-pulse bg-white rounded-lg shadow-lg p-6 mb-6">
-        <div className="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-3">
-            <div className="h-4 bg-gray-200 rounded"></div>
-            <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-          </div>
-          <div className="space-y-3">
-            <div className="h-4 bg-gray-200 rounded"></div>
-            <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-          </div>
-        </div>
-      </div>
-    );
+    return <div>Loading...</div>;
   }
 
   if (error) {
-    return (
-      <div className="bg-red-50 text-red-600 rounded-lg p-4 mb-6">
-        献立データの取得に失敗しました。
-      </div>
-    );
+    return <div>Error: {error.message}</div>;
   }
 
   if (!menu) {

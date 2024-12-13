@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useMenu } from '@/hooks/useMenu';
-import { CSVImport } from './CSVImport';
+import { JSONImport } from './JSONImport';
 import { LogOut } from 'lucide-react';
 import type { MenuItem } from '@/types/menu';
 
@@ -55,7 +55,7 @@ export const AdminDashboard = () => {
       </div>
 
       {/* CSVインポート部分 */}
-      <CSVImport />
+      <JSONImport />
 
       {/* 登録済み献立データの表示 */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -126,7 +126,7 @@ export const AdminDashboard = () => {
       <div className="bg-yellow-50 rounded-lg p-4">
         <h2 className="text-lg font-semibold text-yellow-800 mb-2">注意事項</h2>
         <ul className="list-disc list-inside text-yellow-700 space-y-1">
-          <li>CSVファイルのフォーマットを確認してからインポートしてください</li>
+          <li>JSONファイルのフォーマットを確認してからインポートしてください</li>
           <li>データは最大3ヶ月分まで保存されます</li>
           <li>古いデータは自動的に削除されます</li>
         </ul>
