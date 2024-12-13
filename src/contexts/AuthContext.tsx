@@ -1,7 +1,6 @@
 'use client'
 
 import { createContext, useState, useCallback, ReactNode, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 

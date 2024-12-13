@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
-import type { MenuItem } from '@/types/menu';
 
 export const useMenu = () => {
   const [isLoading, setIsLoading] = useState(false);

@@ -2,8 +2,82 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useMenu } from '@/hooks/useMenu';
 import { JSONImport } from './JSONImport';
-import { LogOut } from 'lucide-react';
+import { LogOut, Coffee, Utensils } from 'lucide-react';
 import type { MenuItem } from '@/types/menu';
+
+const processMenuItems = (menuText: string) => {
+  return menuText
+    .split(/[\n\s]/)
+    .filter(item => item.trim().length > 0)
+    .map(item => item.replace(/　/g, ''));
+};
+
+const MenuCard = ({ menu }: { menu: MenuItem }) => {
+  const formatDate = (dateStr: string) => {
+    return new Date(dateStr).toLocaleDateString('ja-JP', {
+      month: 'long',
+      day: 'numeric',
+      weekday: 'long',
+    });
+  };
+
+  return (
+    <div className="p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+      <h3 className="font-semibold text-gray-900 mb-3">
+        {formatDate(menu.date)}
+      </h3>
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-gray-600">
+            <Coffee className="w-4 h-4" />
+            <span className="font-medium">朝食</span>
+          </div>
+          <div className="pl-6 space-y-1">
+            {processMenuItems(menu.breakfast).map((item, index) => (
+              <div key={index} className="px-3 py-1.5 bg-gray-50 rounded text-sm">
+                {item}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-gray-600">
+            <Utensils className="w-4 h-4" />
+            <span className="font-medium">夕食</span>
+          </div>
+          <div className="pl-6 space-y-1">
+            {processMenuItems(menu.dinner).map((item, index) => (
+              <div key={index} className="px-3 py-1.5 bg-gray-50 rounded text-sm">
+                {item}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const MenuSection = ({ 
+  title, 
+  menus 
+}: { 
+  title: string; 
+  menus: MenuItem[];
+}) => (
+  <div className="bg-white rounded-lg shadow-lg p-6">
+    <h2 className="text-xl font-bold text-primary mb-4">{title}</h2>
+    {menus.length > 0 ? (
+      <div className="space-y-4">
+        {menus.map((menu) => (
+          <MenuCard key={menu.date} menu={menu} />
+        ))}
+      </div>
+    ) : (
+      <p className="text-gray-600">登録された献立がありません</p>
+    )}
+  </div>
+);
 
 export const AdminDashboard = () => {
   const { logout } = useAuth();
@@ -17,11 +91,9 @@ export const AdminDashboard = () => {
       const currentYear = now.getFullYear();
       const currentMonth = now.getMonth() + 1;
       
-      // 今月のデータを取得
       const currentData = await fetchMonthlyMenu(currentYear, currentMonth);
       setCurrentMonthMenus(currentData);
       
-      // 来月のデータを取得
       const nextMonth = currentMonth === 12 ? 1 : currentMonth + 1;
       const nextYear = currentMonth === 12 ? currentYear + 1 : currentYear;
       const nextData = await fetchMonthlyMenu(nextYear, nextMonth);
@@ -30,14 +102,6 @@ export const AdminDashboard = () => {
 
     loadMenuData();
   }, [fetchMonthlyMenu]);
-
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('ja-JP', {
-      month: 'long',
-      day: 'numeric',
-      weekday: 'long',
-    });
-  };
 
   return (
     <div className="space-y-6">
@@ -53,72 +117,13 @@ export const AdminDashboard = () => {
         </button>
       </div>
 
-      {/* CSVインポート部分 */}
+      {/* JSONインポート部分 */}
       <JSONImport />
 
       {/* 登録済み献立データの表示 */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* 今月の献立 */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-xl font-bold text-primary mb-4">今月の献立</h2>
-          {currentMonthMenus.length > 0 ? (
-            <div className="space-y-4">
-              {currentMonthMenus.map((menu) => (
-                <div
-                  key={menu.date}
-                  className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <h3 className="font-semibold text-gray-900 mb-2">
-                    {formatDate(menu.date)}
-                  </h3>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="text-gray-600">朝食:</span>
-                      <p className="text-gray-900">{menu.breakfast}</p>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">夕食:</span>
-                      <p className="text-gray-900">{menu.dinner}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-600">登録された献立がありません</p>
-          )}
-        </div>
-
-        {/* 来月の献立 */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-xl font-bold text-primary mb-4">来月の献立</h2>
-          {nextMonthMenus.length > 0 ? (
-            <div className="space-y-4">
-              {nextMonthMenus.map((menu) => (
-                <div
-                  key={menu.date}
-                  className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <h3 className="font-semibold text-gray-900 mb-2">
-                    {formatDate(menu.date)}
-                  </h3>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="text-gray-600">朝食:</span>
-                      <p className="text-gray-900">{menu.breakfast}</p>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">夕食:</span>
-                      <p className="text-gray-900">{menu.dinner}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-600">登録された献立がありません</p>
-          )}
-        </div>
+        <MenuSection title="今月の献立" menus={currentMonthMenus} />
+        <MenuSection title="来月の献立" menus={nextMonthMenus} />
       </div>
 
       {/* 注意事項やヘルプ */}
