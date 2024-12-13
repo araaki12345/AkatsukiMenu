@@ -1,29 +1,42 @@
-'use client';
+'use client'
 
 import { useEffect, useState } from 'react';
 import { MenuItem } from '@/types/menu';
 import { useMenu } from '@/hooks/useMenu';
 
 export const DailyMenu = () => {
-  const { fetchCurrentMenu, isLoading, error } = useMenu();
+  const { fetchCurrentMenu, isLoading } = useMenu();
   const [menu, setMenu] = useState<MenuItem | null>(null);
 
   useEffect(() => {
-    setMenu(fetchCurrentMenu());
+    const loadMenu = async () => {
+      const currentMenu = await fetchCurrentMenu();
+      // ここでsetMenu(fetchCurrentMenu())としていたのを修正
+      setMenu(currentMenu);
+    };
+    loadMenu();
   }, [fetchCurrentMenu]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error.message}</div>;
+    return <div className="animate-pulse bg-white rounded-lg shadow-lg p-6 mb-6">
+      <div className="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-3">
+          <div className="h-4 bg-gray-200 rounded"></div>
+          <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+        </div>
+        <div className="space-y-3">
+          <div className="h-4 bg-gray-200 rounded"></div>
+          <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+        </div>
+      </div>
+    </div>;
   }
 
   if (!menu) {
     return (
       <div className="bg-yellow-50 text-yellow-600 rounded-lg p-4 mb-6">
-        本日の献立データはありません。
+        本日の献立データはありません
       </div>
     );
   }

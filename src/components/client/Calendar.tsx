@@ -52,17 +52,22 @@ export const Calendar = () => {
     }
 
     for (let day = 1; day <= lastDay.getDate(); day++) {
-      const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-      const menuItem = menuItems.find((item) => item.date === dateStr);
-
-      days.push({
-        day,
-        menuItem: menuItem || { breakfast: "寮食はありません", dinner: "寮食はありません", noMenu: true },
-      });
-    }
-
-    return days;
-  };
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const menuItem = menuItems.find((item) => item.date === dateStr);
+    
+        days.push({
+          day,
+          menuItem: menuItem || {
+            date: dateStr,
+            breakfast: "寮食はありません",
+            dinner: "寮食はありません",
+            noMenu: true // クライアントサイドでのみ使用
+          }
+        });
+      }
+    
+      return days;
+    };
 
   if (isLoading) return <div>Loading...</div>;
 

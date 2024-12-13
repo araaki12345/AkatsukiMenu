@@ -1,32 +1,58 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
-import { MonthlyMenuData } from '@/types/menu';
+import { supabase } from '@/lib/supabase';
+import type { MenuItem } from '@/types/menu';
 
 export const useMenu = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const [menuData, setMenuData] = useState<MonthlyMenuData>({});
 
-  useEffect(() => {
-    // ローカルストレージからデータを読み込む
-    const storedData = localStorage.getItem('menuData');
-    if (storedData) {
-      setMenuData(JSON.parse(storedData));
+  const fetchMonthlyMenu = useCallback(async (year: number, month: number) => {
+    setIsLoading(true);
+    try {
+      const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
+      const endDate = `${year}-${String(month).padStart(2, '0')}-31`;
+
+      const { data, error: fetchError } = await supabase
+        .from('menu')
+        .select('*')
+        .gte('date', startDate)
+        .lte('date', endDate)
+        .order('date');
+
+      if (fetchError) throw fetchError;
+      return data || [];
+    } catch (err) {
+      console.error('Error fetching monthly menu:', err);
+      setError(err instanceof Error ? err : new Error('Unknown error'));
+      return [];
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
-  const fetchMonthlyMenu = useCallback((year: number, month: number) => {
-    const monthKey = `${year}-${String(month).padStart(2, '0')}`;
-    return menuData[monthKey]?.items || [];
-  }, [menuData]);
+  const fetchCurrentMenu = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const today = new Date().toISOString().slice(0, 10);
+      
+      const { data, error: fetchError } = await supabase
+        .from('menu')
+        .select('*')
+        .eq('date', today)
+        .single();
 
-  const fetchCurrentMenu = useCallback(() => {
-    const today = new Date().toISOString().slice(0, 10);
-    const currentMonth = today.slice(0, 7);
-    const data = menuData[currentMonth]?.items || [];
-    return data.find((item) => item.date === today) || null;
-  }, [menuData]);
+      if (fetchError && fetchError.code !== 'PGRST116') throw fetchError;
+      return data || null;
+    } catch (err) {
+      console.error('Error fetching current menu:', err);
+      setError(err instanceof Error ? err : new Error('Unknown error'));
+      return null;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   return {
     isLoading,

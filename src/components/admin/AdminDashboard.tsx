@@ -1,4 +1,3 @@
-// src/components/admin/AdminDashboard.tsx
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useMenu } from '@/hooks/useMenu';
