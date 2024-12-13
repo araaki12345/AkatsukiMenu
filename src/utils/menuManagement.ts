@@ -1,4 +1,3 @@
-// src/utils/menuManagement.ts
 import { MenuItem, MenuData } from '../types/menu';
 
 interface MonthlyMenuData {

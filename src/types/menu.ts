@@ -4,9 +4,11 @@ export interface MenuItem {
     dinner: string;
   }
   
-  export type MenuData = {
-    [monthKey: string]: {
-      items: MenuItem[];
-      lastUpdated: string;
-    };
-  };
+  export interface MenuData {
+    items: MenuItem[];
+    lastUpdated: string;
+  }
+  
+  export interface MonthlyMenuData {
+    [key: string]: MenuData;
+  }
