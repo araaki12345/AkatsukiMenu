@@ -193,7 +193,7 @@ export const Calendar = () => {
                 {day}
               </div>
             ))}
-Ï
+            
             {generateCalendarDays(currentDate, menuItems).map((dayData, index) => (
               <CalendarCell
                 key={index}
