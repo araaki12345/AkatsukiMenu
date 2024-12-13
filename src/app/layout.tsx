@@ -1,6 +1,8 @@
+// src/app/layout.tsx
 import './globals.css'
 import type { Metadata } from 'next'
-import { AuthProvider } from '@/contexts/AuthContext' // AuthProviderをインポート
+import { AuthProvider } from '@/contexts/AuthContext'
+import { Header } from '@/components/common/Header'
 
 export const metadata: Metadata = {
   title: '静岡大学あかつき寮 献立表',
@@ -17,12 +19,7 @@ export default function RootLayout({
       <body>
         <AuthProvider>
           <div className="min-h-screen flex flex-col">
-            <header className="bg-primary text-white py-4">
-              <div className="container mx-auto px-4">
-                <h1 className="text-2xl font-bold">静岡大学あかつき寮 献立表</h1>
-              </div>
-            </header>
-
+            <Header />
             <main className="flex-grow container mx-auto px-4 py-8">
               {children}
             </main>
