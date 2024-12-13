@@ -6,7 +6,7 @@ import { Header } from '@/components/common/Header'
 
 export const metadata: Metadata = {
   title: '静岡大学あかつき寮 献立表',
-  description: 'あかつき寮 献立表管理システム',
+  description: 'あかつき寮 献立表表示システム',
 }
 
 export default function RootLayout({
