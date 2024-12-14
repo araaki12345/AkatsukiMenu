@@ -83,7 +83,7 @@ export const MenuDetailModal = ({ menu, date, onClose }: MenuDetailModalProps) =
                         title="夕食"
                         items={processMenuItems(menu.dinner)}
                     />
-                </div>Ï
+                </div>
             </div>
         </>
     );
