@@ -14,50 +14,63 @@ const processMenuItems = (menuText: string) => {
     .map(item => item.replace(/　/g, ''));
 };
 
-const CalendarCell = ({ 
-  dayData, 
-  index, 
-  onClick 
-}: { 
-  dayData: CalendarDay | null; 
-  index: number; 
+const CalendarCell = ({
+  dayData,
+  index,
+  onClick
+}: {
+  dayData: CalendarDay | null;
+  index: number;
   onClick: () => void;
 }) => {
   if (!dayData) {
-    return <div className="min-h-[160px] bg-gray-50 rounded-lg" />;
+    return <div className="w-full h-full bg-gray-50 rounded-lg" />;
   }
 
   return (
     <div
       onClick={onClick}
-      className={`min-h-[160px] border rounded-lg p-3 ${
-        dayData.isToday ? 'ring-2 ring-primary' :
-        dayData.menuItem.noMenu ? 'bg-red-50' : 
-        'hover:bg-gray-50 cursor-pointer'
-      } transition-colors`}
+      className={`w-full h-24 md:h-32 border rounded-lg flex flex-col items-center justify-between ${dayData.isToday ? 'ring-2 ring-primary' :
+          dayData.menuItem.noMenu ? 'bg-red-50' :
+            'hover:bg-gray-50 cursor-pointer'
+        } transition-colors p-2`}
     >
-      <div className={`font-bold mb-2 ${
-        index % 7 === 0 ? 'text-red-500' :
-        index % 7 === 6 ? 'text-blue-500' :
-        'text-gray-700'
-      }`}>
+      {/* 日付部分 */}
+      <div
+        className={`font-bold text-xs md:text-base ${index % 7 === 0 ? 'text-red-500' :
+          index % 7 === 6 ? 'text-blue-500' :
+            'text-gray-700'
+        }`}
+      >
         {dayData.day}
       </div>
+
+      {/* コンテンツ部分 */}
       {dayData.menuItem.noMenu ? (
-        <div className="text-center text-red-500 font-medium mt-4">
-          寮食なし
+        // 寮食なしの日
+        <div className="flex flex-col items-center justify-center h-full w-full">
+          <div
+            className="text-center text-red-500 font-medium text-[10px] md:text-sm"
+            style={{ whiteSpace: 'nowrap' }}
+          >
+            寮食なし
+          </div>
         </div>
       ) : (
-        <div className="space-y-2 text-xs">
-          <div className="flex items-start gap-1 text-gray-600">
-            <Coffee className="w-3 h-3 mt-0.5 flex-shrink-0" />
-            <div className="line-clamp-2">
+        // 寮食がある日
+        <div className="flex flex-col items-center justify-evenly text-center h-full w-full space-y-1">
+          {/* 朝食 */}
+          <div className="flex items-center gap-0.5 md:gap-1 text-gray-600">
+            <Coffee className="w-2 h-2 md:w-3 md:h-3 flex-shrink-0" />
+            <div className="text-[8px] md:text-xs line-clamp-2 md:line-clamp-2 overflow-hidden">
               {processMenuItems(dayData.menuItem.breakfast).join(' ')}
             </div>
           </div>
-          <div className="flex items-start gap-1 text-gray-600">
-            <Utensils className="w-3 h-3 mt-0.5 flex-shrink-0" />
-            <div className="line-clamp-2">
+
+          {/* 夕食 */}
+          <div className="flex items-center gap-0.5 md:gap-1 text-gray-600">
+            <Utensils className="w-2 h-2 md:w-3 md:h-3 flex-shrink-0" />
+            <div className="text-[8px] md:text-xs line-clamp-2 md:line-clamp-2 overflow-hidden">
               {processMenuItems(dayData.menuItem.dinner).join(' ')}
             </div>
           </div>
@@ -126,10 +139,10 @@ export const Calendar = () => {
         day,
         menuItem: menuItem || {
           id: '',
-          date: dateStr, 
-          breakfast: "寮食はありません", 
-          dinner: "寮食はありません", 
-          noMenu: true 
+          date: dateStr,
+          breakfast: "寮食はありません",
+          dinner: "寮食はありません",
+          noMenu: true
         },
         isToday
       });
@@ -142,7 +155,7 @@ export const Calendar = () => {
     return (
       <div className="animate-pulse bg-white rounded-2xl shadow-lg p-6">
         <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
-        <div className="grid grid-cols-7 gap-4">
+        <div className="grid grid-cols-7 gap-1 md:gap-4 auto-rows-[5rem] md:auto-rows-[6rem]">
           {[...Array(35)].map((_, i) => (
             <div key={i} className="h-32 bg-gray-100 rounded"></div>
           ))}
@@ -153,9 +166,9 @@ export const Calendar = () => {
 
   return (
     <>
-      <div className="bg-white rounded-2xl shadow-lg p-6">
-        <div className="flex justify-between items-center mb-6">
-          {/* 前月へ */}
+      <div className="bg-white rounded-2xl shadow-lg p-4 md:p-6">
+        {/* 月選択部分 */}
+        <div className="flex justify-between items-center mb-4 md:mb-6">
           <button
             onClick={() => changeMonth(-1)}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -164,11 +177,10 @@ export const Calendar = () => {
             <ChevronLeft className="w-6 h-6" />
           </button>
 
-          <h2 className="text-2xl font-bold text-primary">
+          <h2 className="text-xl font-bold text-primary">
             {currentDate.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long' })}
           </h2>
 
-          {/* 次月へ */}
           <button
             onClick={() => changeMonth(1)}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -178,22 +190,23 @@ export const Calendar = () => {
           </button>
         </div>
 
-        <div className="overflow-x-auto">
-          <div className="min-w-[600px] grid grid-cols-7 gap-4">
+        {/* カレンダーグリッド */}
+        <div className="w-full">
+          <div className="grid grid-cols-7 gap-1 md:gap-4">
             {/* 曜日ヘッダー */}
             {['日', '月', '火', '水', '木', '金', '土'].map((day, index) => (
               <div
                 key={day}
-                className={`text-center font-bold p-2 ${
-                  index === 0 ? 'text-red-500' :
+                className={`aspect-square flex items-center justify-center font-bold text-xs md:text-base ${index === 0 ? 'text-red-500' :
                   index === 6 ? 'text-blue-500' :
-                  'text-gray-700'
-                }`}
+                    'text-gray-700'
+                  }`}
               >
                 {day}
               </div>
             ))}
-            
+
+            {/* カレンダーセル */}
             {generateCalendarDays(currentDate, menuItems).map((dayData, index) => (
               <CalendarCell
                 key={index}
@@ -226,4 +239,4 @@ export const Calendar = () => {
       )}
     </>
   );
-};
+}
